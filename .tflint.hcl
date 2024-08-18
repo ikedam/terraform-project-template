@@ -26,6 +26,12 @@ rule "terraform_unused_required_providers" {
   enabled = true
 }
 
+rule "terraform_module_version" {
+  enabled = true
+  # モジュールのバージョンは固定で指定する。
+  exact = true
+}
+
 # https://github.com/terraform-linters/tflint-ruleset-aws
 plugin "aws" {
     enabled = true
