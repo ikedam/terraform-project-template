@@ -1,0 +1,38 @@
+services:
+  terraform:
+    profiles: [dummy]
+    network_mode: bridge
+    image: hashicorp/terraform:1.9.4
+    environment:
+      - TF_LOG
+      - TF_CLI_ARGS
+      - TF_PLUGIN_CACHE_DIR=/workspace/.terraform.d/plugin-cache
+      # inherit AWS auth
+      - AWS_ACCESS_KEY_ID
+      - AWS_SECRET_ACCESS_KEY
+      - AWS_SESSION_TOKEN
+      - AWS_DEFAULT_REGION
+      - AWS_PROFILE
+    volumes:
+      - .:/workspace
+      # access host's aws config
+      - ${HOME:-${USERPROFILE:-}}/.aws:/root/.aws
+    working_dir: /workspace
+  tflint:
+    profiles: [dummy]
+    network_mode: bridge
+    image: ghcr.io/terraform-linters/tflint:v0.52.0
+    environment:
+      # CI/CD でのキャッシュが可能なようにワークスペース内に設定する。
+      - TFLINT_PLUGIN_DIR=/workspace/.tflint.d
+      # --recursive で使用する場合、各モジュールのlintで使用する設定ファイルが各モジュールにある想定になってしまう。
+      # 強制的にリポジトリールートのファイルを参照させる。
+      - TFLINT_CONFIG_FILE=/workspace/.tflint.hcl
+      - TFLINT_LOG
+    volumes:
+      - .:/workspace
+    working_dir: /workspace
+  jq:
+    profiles: [dummy]
+    network_mode: bridge
+    image: ghcr.io/jqlang/jq:1.7.1
