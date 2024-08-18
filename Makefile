@@ -9,7 +9,7 @@ ENABLE_TFLINT ?= true
 help:	## Show target helps
 	@echo "set ENV variable and call targets:"
 	@echo
-	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | \
+	@grep -E '^[a-zA-Z_%-]+:.*?## .*$$' $(MAKEFILE_LIST) | \
 		awk 'BEGIN {FS = ":.*?## "}; {printf "\t\033[36m%-20s\033[0m %s\n", $$1, $$2}'
 
 .PHONY: init
@@ -51,12 +51,12 @@ plan:	## run terraform plan
 apply:	## run terraform apply
 	docker compose run --rm terraform -chdir="env/$(ENV)" apply
 
-.PHONY: destroy
-destroy:	## run terraform destroy
-	docker compose run --rm terraform -chdir="env/$(ENV)" destroy
-
 .PHONY: output-%
-output-%: # run terraform output. Don't need `main.` prefix.
+output-%:	## run terraform output. Don't need `main.` prefix.
 	@$(eval output := ${@:output-%=%})
 	@docker compose run --rm terraform -chdir="env/$(ENV)" output -json main \
 		| docker compose run --rm jq -r .main.$(output)
+
+# .PHONY: destroy
+# destroy:	## run terraform destroy
+# 	docker compose run --rm terraform -chdir="env/$(ENV)" destroy
