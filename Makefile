@@ -1,9 +1,4 @@
 ENV ?= dev
-# tflint は GitHub API の Ratelimit の問題があるため、CI で使いづらい。
-# .tflint.d ディレクトリーをキャッシュすることで回避可能だが、
-# Ratelimit に引っかかる場合はここを false にして、必要なときだけ実行するようにする。
-# See: https://github.com/terraform-linters/tflint/blob/master/docs/user-guide/plugins.md#avoiding-rate-limiting
-ENABLE_TFLINT ?= true
 
 .PHONY: help
 help:	## Show target helps
@@ -15,16 +10,11 @@ help:	## Show target helps
 .PHONY: init
 init:	## run terraform init
 	docker compose run --rm terraform -chdir="env/$(ENV)" init
-ifeq ($(ENABLE_TFLINT),true)
-	docker compose run --rm tflint --init
-endif
 
 .PHONY: lint
 lint:	## lint terraform files
 	docker compose run --rm terraform -chdir="env/$(ENV)" validate
-ifeq ($(ENABLE_TFLINT),true)
 	docker compose run --rm tflint --recursive
-endif
 	docker compose run --rm terraform fmt -recursive -check -diff .
 
 .PHONY: format

@@ -23,8 +23,6 @@ services:
     network_mode: bridge
     image: ghcr.io/terraform-linters/tflint:v0.52.0
     environment:
-      # CI/CD でのキャッシュが可能なようにワークスペース内に設定する。
-      - TFLINT_PLUGIN_DIR=/workspace/.tflint.d
       # --recursive で使用する場合、各モジュールのlintで使用する設定ファイルが各モジュールにある想定になってしまう。
       # 強制的にリポジトリールートのファイルを参照させる。
       - TFLINT_CONFIG_FILE=/workspace/.tflint.hcl

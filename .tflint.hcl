@@ -32,9 +32,13 @@ rule "terraform_module_version" {
   exact = true
 }
 
+/*
+# GitHub API の Rate limit に引っかかる問題の影響が大きいため、
+# プラグインは使用しない。
 # https://github.com/terraform-linters/tflint-ruleset-aws
 plugin "aws" {
     enabled = true
     version = "0.32.0"
     source  = "github.com/terraform-linters/tflint-ruleset-aws"
 }
+*/
